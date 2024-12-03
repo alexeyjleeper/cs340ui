@@ -3,8 +3,7 @@ function EmployeesRow({employeeId, name, age}) {
         <tr>
             <td><button>Edit</button></td>
             <td><button>Delete</button></td>
-            <td align="right" >{eventId}</td>
-            <td>{employeeId}</td>
+            <td align="right" >{employeeId}</td>
             <td>{name}</td>
             <td>{age}</td>
         </tr>

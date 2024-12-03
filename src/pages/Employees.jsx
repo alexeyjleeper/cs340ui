@@ -60,7 +60,7 @@ function Employees() {
             const URL = import.meta.env.VITE_API_URL + 'getEmployeesTable';
             // use axios to query
             const response = await axios.get(URL);
-            console.log(response.data);
+            setEmpArr(response.data);
         } catch (error) {
             //logging
             console.error('Error fetching employee data:', error);
