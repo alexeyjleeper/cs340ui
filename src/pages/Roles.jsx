@@ -1,14 +1,31 @@
-import { resolvePath } from 'react-router-dom';
+import {React, useState, useEffect} from 'react';
+import axios from 'axios';
 import RolesTable from '../components/RolesTable.jsx';
 
 function Roles() {
-    const rolesArr = [[1, "Ranger", 1],
-                      [2, "Manager", 4],
-                      [3, "Director", 2],
-                      [4, "Groundskeeper", 3],
-                      [5, "Scout", 1]];
+    const [rolesArr, setRolesArr] = useState([]);
+
+    const fetchRolesTable = async () => {
+        try {
+            // build url for the endpoint
+            const URL = import.meta.env.VITE_API_URL + 'getRolesTable';
+            // use axios to query
+            const response = await axios.get(URL);
+            setRolesArr(response.data);
+        } catch (error) {
+            //logging
+            console.error('Error fetching roles data:', error);
+            alert('Error fetching roles data from the server.');
+        }
+    }
+
+    useEffect(() => {
+        fetchRolesTable();
+    }, []);
+
     return (
         <>
+            <h1>Roles</h1>
             <div id="browse">
                 <RolesTable rolesArr={rolesArr}/>
                 <p>&nbsp;</p>

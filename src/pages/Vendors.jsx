@@ -1,6 +1,10 @@
-import React from 'react';
+import {React, useState, useEffect} from 'react';
+import VendorsTable from '../components/VendorsTable.jsx';
+import axios from 'axios';
 
 function Vendors() {
+    const [vendorsArr, setVendorsArr] = useState([]);
+
     function showform(dowhat) {
 
             /*
@@ -49,48 +53,32 @@ function Vendors() {
     function deleteVendor(vendor_id) { showform ('delete'); }
     function browseVendors() { showform ('browse'); }
     function showAll() { showform ('all'); }
+
+    const fetchVendorsTable = async () => {
+        try {
+            // build url for the endpoint
+            const URL = import.meta.env.VITE_API_URL + 'getVendorsTable';
+            // use axios to query
+            const response = await axios.get(URL);
+            setVendorsArr(response.data);
+        } catch (error) {
+            //logging
+            console.error('Error fetching vendor data:', error);
+            alert('Error fetching vendor data from the server.');
+        }
+    }
+
+    useEffect(() => {
+        fetchVendorsTable();
+    }, []);
+
     return (
         <>
+            <h1>Vendors</h1>
             <div id="browse">
-            <p><button onClick={showAll}>Display all forms</button> </p>
-            <table border="1" cellpadding="5">
-            <tr>
-                <th><button onClick={newVendor}>New</button></th>
-                <th></th>
-                <th>vendor_id</th>
-                <th>name</th>
-                <th>description</th>
-                <th>event_id</th>
-
-            </tr>
-            <tr>
-                <td><button onClick={() => updateVendor('this.vendor_id')}>Edit</button></td>
-                <td><button onclick={() => deleteVendor('this.vendor_id')}>Delete</button></td>
-                <td align="right" >1</td>
-                <td>Frosty's Ice Cream</td>
-                <td>Ice cream stand with 32 flavors</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td><button onClick={() => updateVendor('this.vendor_id')}>Edit</button></td>
-                <td><button onclick={() => deleteVendor('this.vendor_id')}>Delete</button></td>
-                <td align="right" >2</td>
-                <td>Parks Merchandise</td>
-                <td>Gift shop, apparel, brochures</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td><button onClick={() => updateVendor('this.vendor_id')}>Edit</button></td>
-                <td><button onclick={() => deleteVendor('this.vendor_id')}>Delete</button></td>
-                <td align="right" >3</td>
-                <td>Park Grille</td>
-                <td>Food vendor with extensive menu</td>
-                <td>4</td>
-            </tr>
-            </table>
+                {<VendorsTable vendorsArr={vendorsArr}/>}
+            </div>
             <p>&nbsp;</p>
-            </div> 
-            {/*<!-- browse -->*/}
 
             <div id="insert">
                 <form method="POST" id="addVendor">

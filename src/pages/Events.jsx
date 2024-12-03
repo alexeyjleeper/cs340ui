@@ -1,12 +1,30 @@
-import React from 'react';
+import {React, useState, useEffect} from 'react';
+import axios from 'axios';
 import EventsTable from '../components/EventsTable.jsx';
 
 function Events() {
-    const eventsArr = [[23, 1, "Birthday Party", 1, "11/1/2024 13:00"],
-                       [24, 2, "Family Gathering", 2, "11/1/2024 14:00"],
-                       [25, 1, "BBQ", 4, "11/3/2024 12:00"]];
+    const [eventsArr, setEventsArr] = useState([]);
+
+    const fetchEventsTable = async () => {
+        try {
+            // build url for the endpoint
+            const URL = import.meta.env.VITE_API_URL + 'getEventsTable';
+            // use axios to query
+            const response = await axios.get(URL);
+            setEventsArr(response.data);
+        } catch (error) {
+            //logging
+            console.error('Error fetching golf cart data:', error);
+            alert('Error fetching golf cart data from the server.');
+        }
+    }
+
+    useEffect(() => {
+        fetchEventsTable();
+    }, []);
     return (
         <>
+            <h1>Events</h1>
             <div id="browse">
                 <EventsTable eventsArr={eventsArr}/>
                 <p>&nbsp;</p>

@@ -1,6 +1,10 @@
-import React from 'react';
+import {React, useState, useEffect} from 'react';
+import axios from 'axios';
+import GolfCartsTable from '../components/GolfCartsTable.jsx';
 
 function GolfCarts() {
+    const [golfCartsArr, setGolfCartsArr] = useState([]);
+
     function showform(dowhat) {
         /*
         * four DIVS: browse, insert, update, delete
@@ -48,42 +52,33 @@ function GolfCarts() {
     function deleteGolfCart(golf_cart_id) { showform ('delete'); }
     function browseGolfCarts() { showform ('browse'); }
     function showAll() { showform ('all'); }
+
+    const fetchGolfCartsTable = async () => {
+        try {
+            // build url for the endpoint
+            const URL = import.meta.env.VITE_API_URL + 'getGolfCartsTable';
+            // use axios to query
+            const response = await axios.get(URL);
+            setGolfCartsArr(response.data);
+        } catch (error) {
+            //logging
+            console.error('Error fetching golf cart data:', error);
+            alert('Error fetching golf cart data from the server.');
+        }
+    }
+
+    useEffect(() => {
+        fetchGolfCartsTable();
+    }, []);
+
     return (
         <>
+            <h1>Golf Carts</h1>
             <div id="browse">
+                {<GolfCartsTable golfCartsArr={golfCartsArr}/>}
+            </div>
             <p><button onClick={showAll}>Display all forms</button> </p>
-            <table border="1" cellpadding="5">
-            <tr>
-                <th><button onClick={newGolfCart}>New</button></th>
-                <th></th>
-                <th>golf_cart_id</th>
-                <th>last_serviced</th>
-                <th>employee_id</th>
-            </tr>
-            <tr>
-                <td><button onClick={() => updateGolfCart('this.golf_cart_id')}>Edit</button></td>
-                <td><button onclick={() => deleteGolfCart('this.golf_cart_id')}>Delete</button></td>
-                <td align="right" >1</td>
-                <td align="right">09-09-2024</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td><button onClick={() => updateGolfCart('this.golf_cart_id')}>Edit</button></td>
-                <td><button onclick={() => deleteGolfCart('this.golf_cart_id')}>Delete</button></td>
-                <td align="right" >2</td>
-                <td align="right" >05-12-2023</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td><button onClick={() => updateGolfCart('this.golf_cart_id')}>Edit</button></td>
-                <td><button onclick={() => deleteGolfCart('this.golf_cart_id')}>Delete</button></td>
-                <td align="right" >3</td>
-                <td align="right" >06-26-2024</td>
-                <td>4</td>
-            </tr>
-            </table>
-            <p>&nbsp;</p>
-            </div> 
+            <p>&nbsp;</p> 
             {/*<-- browse -->*/}
 
             <div id="insert">
@@ -129,7 +124,7 @@ function GolfCarts() {
                 </fieldset>
                 <input class="btn" type="submit" id="DeleteGolfCart" value="Delete GolfCart"></input>
                     <input class="btn" type="button" value="cancel" onClick="browsePeople()"></input>
-            </form> 
+            </form>
             </div>
         </>
     );
