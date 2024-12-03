@@ -68,8 +68,13 @@ function Employees() {
         }
     }
 
+    const createEmployee = async () => {
+    
+    }
+    
     useEffect(() => {
         fetchEmployeesTable();
+        createEmployee();
     }, []);
 
     return (
