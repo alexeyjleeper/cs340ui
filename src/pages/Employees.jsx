@@ -64,17 +64,39 @@ function Employees() {
         } catch (error) {
             //logging
             console.error('Error fetching employee data:', error);
-            alert('Error fetching employee data from the server.');
+            // alert('Error fetching employee data from the server.');
         }
     }
 
-    const createEmployee = async () => {
-    
+    const makeEmployee = async () => {
+        document.getElementById('addEmployee').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form from submitting traditionally
+          
+            let name = document.getElementById('name').value
+            let age = document.getElementById('age').value
+
+            // Gather form data
+            const formData = {
+                name, age
+            };
+
+            try {
+                const URL = import.meta.env.VITE_API_URL + 'createEmployee';
+                console.log('API URL test:', URL);
+                const response = await axios.post(URL, formData);
+                console.log('Server Response:', response);
+                alert('Form submitted successfully!');
+            } catch (error) {
+                //logging
+                console.error('Error submitting form:', error);
+                alert('Failed to submit the form. Please try again.');
+            }
+        })
     }
     
     useEffect(() => {
         fetchEmployeesTable();
-        createEmployee();
+        makeEmployee();
     }, []);
 
     return (
@@ -88,10 +110,10 @@ function Employees() {
                     <legend><strong>Add Employee</strong></legend>
                     <fieldset class="fields">
                         <label> name </label>
-                        <input type="text" name="name"></input>
+                        <input type="text" id="name" name="name" required></input>
                         <br/>
                         <label> age </label>
-                        <input type="number" name="age"></input>
+                        <input type="number" id="age"  name="age" required></input>
                     </fieldset>
                     <input class="btn" type="submit" id="addEmployee" value="Add Employee"></input>
                     {/*<input class="btn" type="button" value="cancel" onClick={browseEmployees()}></input>*/}
