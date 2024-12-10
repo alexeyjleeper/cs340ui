@@ -8,7 +8,7 @@ function Roles() {
     const fetchRolesTable = async () => {
         try {
             // build url for the endpoint
-            const URL = import.meta.env.VITE_API_URL + 'getRolesTable';
+            const URL = import.meta.env.VITE_API_URL + 'createRole';
             // use axios to query
             const response = await axios.get(URL);
             setRolesArr(response.data);
@@ -19,8 +19,28 @@ function Roles() {
         }
     }
 
+    const makeRole = async (roleData) => {
+        document.getElementById('addRole').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form from submitting traditionally
+          
+        try {
+            const URL = import.meta.env.VITE_API_URL + 'createRole';
+            const response = axios.post(URL, roleData);
+            console.log('Request payload:', response);
+            console.log('API URL test:', URL);
+            // alert('role added successfully!');
+            fetchRolesTable(); // Refresh the table after adding
+        } catch (error) {
+            console.error('Error adding new role:', error);
+            alert('Error adding role to the server.');
+        }
+
+        })
+    };
+
     useEffect(() => {
         fetchRolesTable();
+        makeRole();
     }, []);
 
     return (
@@ -31,7 +51,16 @@ function Roles() {
                 <p>&nbsp;</p>
             </div>
             <div id="insert">
-                <form method="POST" id="addRoles">
+                <form method="POST" 
+                id="addRole"nSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const employeeData = {
+                        description: formData.get('description'),
+                        role_id: formData.get('role_id'),
+                    };
+                    makeEmployee(employeeData);
+                }}>
                     <legend><strong>Add Role</strong></legend>
                     <fieldset class="fields">
                         <label> description </label>
@@ -40,7 +69,7 @@ function Roles() {
                         <input type="number" name="employee_id"></input>
                     </fieldset>
                     <input class="btn" type="submit" id="addRolesSubmit"></input>
-                    {/*<input class="btn" type="button" value="cancel" onClick={browseEmployees()}></input>*/}
+                    {/*<input class="btn" type="button" value="cancel" onClick={browseroles()}></input>*/}
                 </form>
             </div>
             <p>&nbsp;</p>
