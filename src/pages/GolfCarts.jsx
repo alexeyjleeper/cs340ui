@@ -67,8 +67,28 @@ function GolfCarts() {
         }
     }
 
+    const makeGolfCart = async (GolfCartData) => {
+        document.getElementById('addGolfCart').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form from submitting traditionally
+          
+        try {
+            const URL = import.meta.env.VITE_API_URL + 'createGolfCart';
+            const response = axios.post(URL, GolfCartData);
+            console.log('Request payload:', response);
+            console.log('API URL test:', URL);
+            // alert('GolfCart added successfully!');
+            fetchGolfCartsTable(); // Refresh the table after adding
+        } catch (error) {
+            console.error('Error adding new GolfCart:', error);
+            alert('Error adding GolfCart to the server.');
+        }
+
+        })
+    };
+
     useEffect(() => {
         fetchGolfCartsTable();
+        makeGolfCart();
     }, []);
 
     return (
@@ -82,12 +102,22 @@ function GolfCarts() {
             {/*<-- browse -->*/}
 
             <div id="insert">
-                <form method="POST" id="addGolfCart">
+                <form method="POST" 
+                    id="addGolfCart"                    
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const golfCartData = {
+                            last_serviced: formData.get('last_serviced'),
+                            golf_cart_id: formData.get('golf_cart_id'),
+                        };
+                        makeGolfCart(golfCartData);
+                    }}>
                     <legend><strong>Add GolfCart</strong></legend>
                     <fieldset class="fields">
-                        <label> last_serviced </label> <input type="number" name="last_serviced"></input>
+                        <label> last_serviced </label> <input type="number" name="last_serviced" id="last_serviced"></input>
                         <br/>
-                        <label> employee_id </label> <input type="text" name="employee_id"></input>
+                        <label> golf_cart_id </label> <input type="text" name="golf_cart_id" id="golf_cart_id"></input>
                     </fieldset>
                     <input class="btn" type="submit" id="addGolfCart" value="Add GolfCart"></input>
                     <input class="btn" type="button" value="cancel" onClick="browseGolfCarts()"></input>

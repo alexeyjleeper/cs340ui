@@ -68,8 +68,28 @@ function Vendors() {
         }
     }
 
+    const makeVendor = async (VendorData) => {
+        document.getElementById('addVendor').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form from submitting traditionally
+          
+        try {
+            const URL = import.meta.env.VITE_API_URL + 'createVendor';
+            const response = axios.post(URL, VendorData);
+            console.log('Request payload:', response);
+            console.log('API URL test:', URL);
+            // alert('Vendor added successfully!');
+            fetchVendorsTable(); // Refresh the table after adding
+        } catch (error) {
+            console.error('Error adding new Vendor:', error);
+            alert('Error adding Vendor to the server.');
+        }
+
+        })
+    };
+
     useEffect(() => {
         fetchVendorsTable();
+        makeVendor();
     }, []);
 
     return (
@@ -81,14 +101,25 @@ function Vendors() {
             <p>&nbsp;</p>
 
             <div id="insert">
-                <form method="POST" id="addVendor">
+                <form method="POST" 
+                    id="addVendor"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const VendorData = {
+                            name: formData.get('name'),
+                            description: formData.get('description'),
+                            // description: formData.get('event_id'),
+                        };
+                        makeVendor(VendorData);
+                    }}>
                     <legend><strong>Add Vendor</strong></legend>
                     <fieldset class="fields">
                         <label> name </label> <input type="text" name="name"></input>
                         <br/>
-                        <label> description </label> <input type="number" name="description"></input>
+                        <label> description </label> <input type="text" name="description"></input>
                         <br/>
-                        <label> event_id </label> <input type="number" name="event_id "></input>
+                        {/* <label> event_id </label> <input type="number" name="event_id "></input> */}
                 </fieldset>
                     <input class="btn" type="submit" id="addVendor" value="Add Vendor"></input>
                     <input class="btn" type="button" value="cancel" onClick={browseVendors}></input>

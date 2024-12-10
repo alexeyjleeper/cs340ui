@@ -19,8 +19,28 @@ function Events() {
         }
     }
 
+    const makeEvent = async (eventData) => {
+        document.getElementById('addEvent').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form from submitting traditionally
+          
+        try {
+            const URL = import.meta.env.VITE_API_URL + 'createEvent';
+            const response = axios.post(URL, eventData);
+            console.log('Request payload:', response);
+            console.log('API URL test:', URL);
+            // alert('Event added successfully!');
+            fetchEventsTable(); // Refresh the table after adding
+        } catch (error) {
+            console.error('Error adding new event:', error);
+            alert('Error adding event to the server.');
+        }
+
+        })
+    };
+
     useEffect(() => {
         fetchEventsTable();
+        makeEvent();
     }, []);
     return (
         <>
@@ -30,11 +50,22 @@ function Events() {
                 <p>&nbsp;</p>
             </div>
             <div id="insert">
-                <form method="POST" id="addEvent">
+                <form method="POST"
+                    id="addEvent"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const eventData = {
+                            event_name: formData.get('event_name'),
+                            vendor_id: formData.get('vendor_id'),
+                            time_start: formData.get('time_start'),
+                        };
+                        makeEvent(eventData);
+                    }}>
                     <legend><strong>Add Event</strong></legend>
                     <fieldset class="fields">
-                        <label> employee_id </label>
-                        <input type="number" name="employee_id"></input>
+                        <label> event_id </label>
+                        <input type="number" name="event_id"></input>
                         <br/>
                         <label> event_name </label>
                         <input type="text" name="event_name"></input>
@@ -44,7 +75,7 @@ function Events() {
                         <input type="text" name="time_start"></input>
                     </fieldset>
                     <input class="btn" type="submit" id="addEvent" value="AddEvent"></input>
-                    {/*<input class="btn" type="button" value="cancel" onClick={browseEmployees()}></input>*/}
+                    {/*<input class="btn" type="button" value="cancel" onClick={browseEvents()}></input>*/}
                 </form>
             </div>
             <p>&nbsp;</p>
